@@ -1,2 +1,10 @@
 # Mysql-csv-converter
-Convert table from csv into mysql  and vice-versa. Also convert entire database into csv file or all the csv file present in directory into mysql tables.
+
+## Usuage
+* Convert table from mysql to csv files
+* Convert csv files to table in mysql
+* Convert all tables present in the database into csv files
+* Convert all the tables present in a diretory into csv files
+
+## Requirement
+* mysql.connector

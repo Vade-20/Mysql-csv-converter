@@ -124,6 +124,15 @@ def table_in_mysql():
 
 def csv_to_mysql():
     print('Current working database :',mycom.database)
+    path = os.getcwd()
+    print('Current working dirctory :',path)
+
+    if input("Would you like to change directory (y/n):").lower().startswith('y'):
+        abs = input('Please enter the absolute path:')
+        while not os.path.isabs(abs):
+            abs = input('Please enter the absolute path:')
+        os.chdir(abs)
+
     csv_file_name = input("Enter the file name :")
     table_name = csv_file_name
 
@@ -156,11 +165,15 @@ def csv_to_mysql():
         else:
             sen += f'{column_name[i]} {types[i]})'
             ins += '%s)'
-    cur.execute(sen)
-    mycom.commit()
-    cur.executemany(ins,data_ins)
-    mycom.commit()
+    try:
+        cur.execute(sen)
+        cur.executemany(ins,data_ins)
+        mycom.commit()
+    except mysql.ProgrammingError:
+        print('The csv file is too complex for this scrpit to copy')
+        return None
     print("The table is inserted in ",mycom.database)
+    os.chdir(path)
 
 
 
@@ -220,9 +233,7 @@ def copy_entire_database():
 
 def copy_entire_directory():  #This function only copy csv file to the mysql
     print("Current working database is ",mycom.database)
-    ch = input("Would you like to change current database (Y/N): ")
-
-    if ch.lower().startswith('y'):
+    if input("Would you like to change current database (Y/N): ").lower().startswith('y'):
         cur.execute('show databases')
         data = [i[0] for i in cur.fetchall()]
         database = input('Enter the name of the database: ')
@@ -231,6 +242,14 @@ def copy_entire_directory():  #This function only copy csv file to the mysql
             database = input("Please enter the correct database: ")
         cur.execute(f'use {database}')
         mycom.commit()
+    path = os.getcwd()
+    print("Current working directory is:",path)
+    if input("Would you like to change it (Y/N):").lower().startswith('y'):
+        abs = input('Please enter the absolute path:')
+        while not os.path.isabs(abs):
+            abs = input('Please enter the absolute path:')
+        os.chdir(abs)
+
 
     csv_file = [os.path.splitext(i)[0].lower() for i in os.listdir() if os.path.splitext(i)[1]=='.csv']
     for i in csv_file:
@@ -255,10 +274,18 @@ def copy_entire_directory():  #This function only copy csv file to the mysql
             else:
                 sen += f'{column_name[k]} {type_date[k]})'
                 ins += '%s)'
-        cur.execute(sen)
-        mycom.commit()
-        cur.executemany(ins,data_ins)
-        mycom.commit()
+        try:
+            cur.execute(sen)
+            cur.executemany(ins,data_ins)
+            mycom.commit()
+        except mysql.ProgrammingError:
+            print('The csv file is too complex for this scrpit to copy')
+            return None
+        print("The table is inserted in ",mycom.database)
+        os.chdir(path)
+        
+
+
 
 
 def error():
