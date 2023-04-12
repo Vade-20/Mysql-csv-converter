@@ -279,11 +279,12 @@ def copy_entire_directory():  #This function only copy csv file to the mysql
             cur.executemany(ins,data_ins)
             mycom.commit()
         except mysql.ProgrammingError:
-            print('The csv file is too complex for this scrpit to copy')
-            return None
-        print("The table is inserted in ",mycom.database)
-        os.chdir(path)
-        
+            print(f'The csv file {i} is too complex for this scrpit to copy')
+            print("Please note that the first row of csv file should be column names")
+            continue
+    print("The table is inserted in ",mycom.database)
+    os.chdir(path)
+    
 
 
 
